@@ -1,3 +1,8 @@
+
+*{
+  font-family: 'Ubuntu', sans-serif;
+}
+
 .graph_container {
   height: 100%;
   width: 100%;
@@ -23,16 +28,16 @@
 }
 
 .button_search {
-  height: 100%;
-  width: 20%;
+  height: 100%; width: 20%;
+  border: solid;
   margin-left: 5px;
   background-color: transparent;
   box-shadow: 10px 10px 8px #888888;
 }
 
 .button_reset {
-  height: 100%;
-  width: 20%;
+  height: 100%; width: 20%;
+  border: solid;
   margin-left: 5px;
   background-color: transparent;
   box-shadow: 10px 10px 8px #888888;
