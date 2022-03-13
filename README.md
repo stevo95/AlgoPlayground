@@ -4,7 +4,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Disclaimer:
 
-App is under development and not fully finished nore debugged. Have patience :-) 
+App is under development and not fully finished nore debugged. Please have patience :-) 
 
 ## Deployed at:
 
