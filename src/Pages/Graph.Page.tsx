@@ -1,15 +1,15 @@
-import React, {useState, useRef, useEffect, MutableRefObject, FormEvent} from 'react';
+import {useState, useRef, useEffect, MutableRefObject, FormEvent} from 'react';
 import './Graph.Page.css';
-import { ForceGraph2D, ForceGraph3D, ForceGraphVR, ForceGraphAR } from 'react-force-graph';
+import { ForceGraph2D } from 'react-force-graph';
 import generateRandomGraph from '../Services/generate-random-graph'
 
 const GraphPage = () => {
 
     interface GraphInterface {
-        [key: string]: NodeInterface;
+        [key: string]: VertexInterface;
     }
 
-    interface NodeInterface {
+    interface VertexInterface {
         isStartingWord?: boolean;
         isTargetWord?: boolean;
         isSearched: boolean;
@@ -37,8 +37,6 @@ const GraphPage = () => {
     const startNode: any = useRef(null)
     const targetNode: any = useRef(null)
     const increment: MutableRefObject<number> = useRef(1000)
-    const bfsRef: MutableRefObject<boolean> = useRef(true)
-    const dfsRef: MutableRefObject<boolean> = useRef(false)
     const selectedAlgoRef: MutableRefObject<string> = useRef('bfs');
     const [reset, setReset]: any = useState(false)
     const graphData = {
@@ -80,12 +78,12 @@ const GraphPage = () => {
     
     const findNodeAndChangeColor = (searchFor: string, state: string) => {
         for (const node of nodes) {
-            if (node.id == searchFor) {
-                if (state == 'searched') {
+            if (node.id === searchFor) {
+                if (state === 'searched') {
                     node.isSearched = true;
-                } else if (state == 'target') {
+                } else if (state === 'target') {
                     node.isTargetWord = true;
-                } else if (state == 'start') {
+                } else if (state === 'start') {
                     node.isStartingWord = true;
                 } else {
                     node.isStartingWord = false;
@@ -97,7 +95,7 @@ const GraphPage = () => {
 
     const findLinkAndChangeColor = (source: string, target: string) => {
         for (const link of links) {
-            if (link.source.id == source && link.target.id == target) {
+            if (link.source.id === source && link.target.id === target) {
                 link.isPassed = true;
             }
         }
@@ -155,7 +153,7 @@ const GraphPage = () => {
                 link = linkQueue.shift();
             }
 
-            if (node == targetWord) {
+            if (node === targetWord) {
                 changeOnDelay(1000, node, 'searched', link, true);
                 console.log(links)
                 break;
@@ -225,7 +223,7 @@ const GraphPage = () => {
     const radioButtonHandler = (event: FormEvent<HTMLDivElement>) => {
         const value = (event.target as HTMLTextAreaElement).value;
 
-        if (value == 'bfs') {
+        if (value === 'bfs') {
             selectedAlgoRef.current = 'bfs';
             setDfsChecked(false);
         } else {
@@ -235,7 +233,7 @@ const GraphPage = () => {
     }
 
     const searchButtonHandler = () => {
-        if (selectedAlgoRef.current == 'bfs') {
+        if (selectedAlgoRef.current === 'bfs') {
             graphSearchBreadthFirst(startNode.current, targetNode.current)
 
         } else {
@@ -303,9 +301,9 @@ const GraphPage = () => {
                 ctx.textBaseline = "middle";
                 ctx.fillStyle = "black"; //node.color;
                 if (
-                    typeof label == 'string' && 
-                    typeof node.x == 'number' && 
-                    typeof node.y == 'number'
+                    typeof label === 'string' && 
+                    typeof node.x === 'number' && 
+                    typeof node.y === 'number'
                 ) {
                     ctx.fillText(label, node.x, node.y + 15);
                 }

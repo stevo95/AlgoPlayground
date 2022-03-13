@@ -1,19 +1,12 @@
 import returnDictionary from './generate-dictionary';
 
 interface GraphInterface {
-    [key: string]: NodeInterface;
+    [key: string]: VertexInterface;
 }
 
-interface NodeInterface {
+interface VertexInterface {
     isSearched?: boolean;
     links: string[];
-}
-
-interface GraphNodeInterface {
-    id: string;
-    label: string;
-    color: string;
-    val?: number;
 }
 
 const generateRandomGraph = (numOfNodes: number) => {
@@ -35,7 +28,7 @@ const generateRandomGraph = (numOfNodes: number) => {
         for (let j = 0; j < el.length; ++j) {
             if (graph[el[j]]) {
                 const index = el.indexOf(el[j]);
-                if (index == 0) {
+                if (index === 0) {
                     if (!graph[el[j]].links.includes(el[1])) {
                         graph[el[j]].links.push(el[1])
                     }
