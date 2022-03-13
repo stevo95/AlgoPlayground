@@ -11,7 +11,7 @@ import generateRandomGraph from "../Services/generate-random-graph";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { Close } from "@mui/icons-material";
+import { Close, Info } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 
 const GraphPage = () => {
@@ -363,8 +363,8 @@ const GraphPage = () => {
         </Box>
       </Modal>
       <div className="graph_control_container">
-        <button className="button_search" onClick={handleModalOpen}>
-          i
+        <button className="button_general" onClick={handleModalOpen}>
+          <Info/>
         </button>
         <div className="radio_container">
           <div className="radio_button_pair">
@@ -392,15 +392,16 @@ const GraphPage = () => {
             <div className="radio_button_name">Breadth first search</div>
           </div>
         </div>
-        <button className="button_search" onClick={searchButtonHandler}>
+        <button className="button_general" onClick={searchButtonHandler}>
           SEARCH
         </button>
-        <button className="button_reset" onClick={resetButtonHandler}>
+        <button className="button_general" onClick={resetButtonHandler}>
           RESET
         </button>
       </div>
       <ForceGraph2D
         graphData={graphData}
+        height={window.innerHeight * 0.9}
         linkWidth={2}
         linkColor={(link) => linkColorHandler(link)}
         nodeColor={(node) => nodeColorHandler(node)}
