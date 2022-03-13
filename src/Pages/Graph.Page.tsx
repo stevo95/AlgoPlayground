@@ -8,6 +8,11 @@ import {
 import "./Graph.Page.css";
 import { ForceGraph2D } from "react-force-graph";
 import generateRandomGraph from "../Services/generate-random-graph";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { Close, Info } from "@mui/icons-material";
+import IconButton from "@mui/material/IconButton";
 
 const GraphPage = () => {
   interface GraphInterface {
@@ -38,6 +43,7 @@ const GraphPage = () => {
   const [links, setLinks]: any[] = useState([]);
   const [graph, setGraph]: any = useState([]);
   const [dfsChecked, setDfsChecked] = useState(false);
+  const [modalOpen, setModalOpen]: any = useState(false);
   const nodeRef: any = useRef(null);
   const startNode: any = useRef(null);
   const targetNode: any = useRef(null);
@@ -291,9 +297,75 @@ const GraphPage = () => {
     setReset(!reset);
   };
 
+  const handleModalOpen = () => {
+    if (!modalOpen) {
+      setModalOpen(true);
+    }
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
+
   return (
     <div className="graph_container">
+      <Modal
+        open={modalOpen}
+        onClose={handleModalClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Box
+          sx={{
+            width: "80%",
+            height: "80%",
+            "background-color": "whitesmoke",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <IconButton
+            style={{ alignSelf: "flex-start", justifySelf: "flex-start" }}
+            onClick={handleModalClose}
+          >
+            <Close />
+          </IconButton>
+          <Box
+            sx={{
+              display: "flex",
+              height: "100%",
+              flexDirection: "column",
+              alignSelf: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              1. Select starting graph vertex by clicking it
+            </Typography>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              2. Select target graph vertex by clicking it
+            </Typography>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              3. Select desired algorithm
+            </Typography>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              4. Hit search
+            </Typography>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              5. Watch it work :-)
+            </Typography>
+          </Box>
+        </Box>
+      </Modal>
       <div className="graph_control_container">
+        <button className="button_general" onClick={handleModalOpen}>
+          <Info/>
+        </button>
         <div className="radio_container">
           <div className="radio_button_pair">
             <input
@@ -320,15 +392,16 @@ const GraphPage = () => {
             <div className="radio_button_name">Breadth first search</div>
           </div>
         </div>
-        <button className="button_search" onClick={searchButtonHandler}>
+        <button className="button_general" onClick={searchButtonHandler}>
           SEARCH
         </button>
-        <button className="button_reset" onClick={resetButtonHandler}>
+        <button className="button_general" onClick={resetButtonHandler}>
           RESET
         </button>
       </div>
       <ForceGraph2D
         graphData={graphData}
+        height={window.innerHeight * 0.9}
         linkWidth={2}
         linkColor={(link) => linkColorHandler(link)}
         nodeColor={(node) => nodeColorHandler(node)}
