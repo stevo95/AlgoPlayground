@@ -2,6 +2,10 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Disclaimer:
+
+App is under development and not fully finished nore debugged. Have patience :-) 
+
 ## Deployed at:
 
 [https://algoplayground.netlify.app](https://algoplayground.netlify.app)
