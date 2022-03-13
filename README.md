@@ -2,6 +2,9 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Deployed at:
+[Link to Site](https://algoplayground.netlify.app)
+
 ## Functionality:
 
 ### Graph search visualisation
