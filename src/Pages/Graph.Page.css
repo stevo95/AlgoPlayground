@@ -1,11 +1,14 @@
-
-*{
-  font-family: 'Ubuntu', sans-serif;
+* {
+  font-family: "Ubuntu", sans-serif;
 }
 
 .graph_container {
   height: 100%;
-  width: 100%;
+  width: 95vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
 }
 
 .graph_control_container {
@@ -27,18 +30,12 @@
   display: flex;
 }
 
-.button_search {
-  height: 100%; width: 20%;
+.button_general {
+  height: 100%;
+  width: auto;
   border: solid;
   margin-left: 5px;
   background-color: transparent;
   box-shadow: 10px 10px 8px #888888;
-}
-
-.button_reset {
-  height: 100%; width: 20%;
-  border: solid;
-  margin-left: 5px;
-  background-color: transparent;
-  box-shadow: 10px 10px 8px #888888;
+  cursor: pointer;
 }
