@@ -29,9 +29,9 @@ const GraphPage = (): ReactElement => {
   const [dfsChecked, setDfsChecked] = useState<boolean>(false);
   const [graph, setGraph]: GraphVertexInterface[] | any[] = useState([]);
   const [links, setLinks]: LinkInterface[] | any[] = useState([]);
+  const [vertexes, setVertex]: GraphVertexInterface[] | any[] = useState([]);
   const [reset, setReset] = useState<boolean>(false);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [vertexes, setVertex]: GraphVertexInterface[] | any[] = useState([]);
   const vertexRef = useRef<string>("");
   const startVertex = useRef<string>("");
   const targetVertex = useRef<string>("null");
