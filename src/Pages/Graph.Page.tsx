@@ -1,60 +1,35 @@
-import React, {useState, useRef, useEffect, MutableRefObject, FormEvent} from 'react';
+import { useState, useRef, useEffect, MutableRefObject, FormEvent, ReactElement } from 'react';
 import './Graph.Page.css';
-import { ForceGraph2D, ForceGraph3D, ForceGraphVR, ForceGraphAR } from 'react-force-graph';
+import { ForceGraph2D } from 'react-force-graph';
 import generateRandomGraph from '../Services/generate-random-graph'
+import { GraphInterface, LinkInterface, GraphVertexInterface } from '../Interfaces/GraphInterfaces';
 
-const GraphPage = () => {
+const GraphPage = (): ReactElement => {
 
-    interface GraphInterface {
-        [key: string]: NodeInterface;
-    }
-
-    interface NodeInterface {
-        isStartingWord?: boolean;
-        isTargetWord?: boolean;
-        isSearched: boolean;
-        links: string[];
-        id?: string;
-    }
-
-    interface GraphNodeInterface {
-        id: string;
-        label: string;
-        color: string;
-        val?: number;
-    }
-
-    interface LinkInterface {
-        source: string;
-        target: string;
-    }
-
-    const [nodes, setNode]: GraphNodeInterface[] | any[] = useState([]);
-    const [links, setLinks]: any[] = useState([]);
+    const [vertexes, setVertex]: GraphVertexInterface[] | any[] = useState([]);
+    const [links, setLinks]: LinkInterface[] | any[] = useState([]);
     const [graph, setGraph]: any = useState([]);
     const [dfsChecked, setDfsChecked] = useState(false);
-    const nodeRef: any = useRef(null);
-    const startNode: any = useRef(null)
-    const targetNode: any = useRef(null)
+    const vertexref: any = useRef(null);
+    const startVertex: any = useRef(null)
+    const targetVertex: any = useRef(null)
     const increment: MutableRefObject<number> = useRef(1000)
-    const bfsRef: MutableRefObject<boolean> = useRef(true)
-    const dfsRef: MutableRefObject<boolean> = useRef(false)
     const selectedAlgoRef: MutableRefObject<string> = useRef('bfs');
     const [reset, setReset]: any = useState(false)
     const graphData = {
-        nodes: nodes, 
+        nodes: vertexes, 
         links: links
     }
 
     useEffect(() => {
-        const tempNodes = [];
+        const tempVertexes = [];
         const tempLinks = [];
 
         const randomGraph = generateRandomGraph(30);
         setGraph(randomGraph);
 
         for (const [key, value] of Object.entries(randomGraph)) {
-            tempNodes.push({
+            tempVertexes.push({
                 id: key,
                 label: key,
                 color: "#555",
@@ -73,23 +48,23 @@ const GraphPage = () => {
                 }
             }
         }
-        setNode(tempNodes);
+        setVertex(tempVertexes);
         setLinks(tempLinks);
     }, [reset]);
 
     
-    const findNodeAndChangeColor = (searchFor: string, state: string) => {
-        for (const node of nodes) {
-            if (node.id == searchFor) {
-                if (state == 'searched') {
-                    node.isSearched = true;
-                } else if (state == 'target') {
-                    node.isTargetWord = true;
-                } else if (state == 'start') {
-                    node.isStartingWord = true;
+    const findVertexAndChangeColor = (searchFor: string, state: string) => {
+        for (const vertex of vertexes) {
+            if (vertex.id === searchFor) {
+                if (state === 'searched') {
+                    vertex.isSearched = true;
+                } else if (state === 'target') {
+                    vertex.isTargetWord = true;
+                } else if (state === 'start') {
+                    vertex.isStartingWord = true;
                 } else {
-                    node.isStartingWord = false;
-                    node.isTargetWord = false;
+                    vertex.isStartingWord = false;
+                    vertex.isTargetWord = false;
                 }
             }
         }
@@ -97,7 +72,7 @@ const GraphPage = () => {
 
     const findLinkAndChangeColor = (source: string, target: string) => {
         for (const link of links) {
-            if (link.source.id == source && link.target.id == target) {
+            if (link.source.id === source && link.target.id === target) {
                 link.isPassed = true;
             }
         }
@@ -108,7 +83,7 @@ const GraphPage = () => {
             if (linkOnly) {
                 findLinkAndChangeColor(link.source, link.target);
             } else {
-                findNodeAndChangeColor(searchFor, state);
+                findVertexAndChangeColor(searchFor, state);
                 findLinkAndChangeColor(link.source, link.target);
             }
             console.log("link to color: ", link)
@@ -116,8 +91,8 @@ const GraphPage = () => {
         }, ms + increment.current));
     }
 
-    const graphSearchDepthFirst = (graph: GraphInterface, toSearch: string, targetWord: string, searchedNodes: string[], previous: string) => {
-        searchedNodes.push(toSearch);
+    const graphSearchDepthFirst = (graph: GraphInterface, toSearch: string, targetWord: string, searchedVertexes: string[], previous: string) => {
+        searchedVertexes.push(toSearch);
         changeOnDelay(1000, toSearch, 'searched', {source: previous, target: toSearch}, false);
         increment.current += 1000;
 
@@ -127,9 +102,9 @@ const GraphPage = () => {
             return true;
         }
 
-        for (const node of graph[toSearch].links) {
-            if (!searchedNodes.includes(node)) {
-                const result = graphSearchDepthFirst(graph, node, targetWord, searchedNodes, toSearch);
+        for (const vertex of graph[toSearch].links) {
+            if (!searchedVertexes.includes(vertex)) {
+                const result = graphSearchDepthFirst(graph, vertex, targetWord, searchedVertexes, toSearch);
                 if (result) {
                     return true;
                 }
@@ -142,37 +117,37 @@ const GraphPage = () => {
     const graphSearchBreadthFirst = async (startWord: string, targetWord: string) => {
         const searchQueue: string[] = [startWord];
         const linkQueue: LinkInterface[] = [];
-        const searchedNodes = [];
+        const searchedVertexes = [];
         const history = [];
-        let node: any;
+        let vertex: any;
         let link: any; 
 
         while (searchQueue.length) {
-            node = searchQueue.shift();
-            searchedNodes.push(node);
+            vertex = searchQueue.shift();
+            searchedVertexes.push(vertex);
 
             if (linkQueue.length) {
                 link = linkQueue.shift();
             }
 
-            if (node == targetWord) {
-                changeOnDelay(1000, node, 'searched', link, true);
+            if (vertex === targetWord) {
+                changeOnDelay(1000, vertex, 'searched', link, true);
                 console.log(links)
                 break;
-            } else if (node !== targetNode && node !== startWord && node !== targetWord) {
-                changeOnDelay(1000, node, 'searched', link, false);
+            } else if (vertex !== targetVertex && vertex !== startWord && vertex !== targetWord) {
+                changeOnDelay(1000, vertex, 'searched', link, false);
                 increment.current += 1000;
                 history.push({
-                    node: node,
-                    links: graph[node].links
+                    vertex: vertex,
+                    links: graph[vertex].links
                 })
             }
 
-            for (const el of graph[node].links) {
-                if (!searchedNodes.includes(el)) {
+            for (const el of graph[vertex].links) {
+                if (!searchedVertexes.includes(el)) {
                     searchQueue.push(el);
                     linkQueue.push({
-                        source: node,
+                        source: vertex,
                         target: el
                     })
                 }
@@ -181,13 +156,13 @@ const GraphPage = () => {
 
     }
 
-    const nodeColorHandler = (node: any) => {
-        if (node.isTargetWord) {
+    const vertexColorHandler = (vertex: any) => {
+        if (vertex.isTargetWord) {
             return 'greenyellow';
-        } else if (node.isStartingWord) {
+        } else if (vertex.isStartingWord) {
             return 'blue';
         }
-        const color = node.isSearched ? 'red' : '#555';
+        const color = vertex.isSearched ? 'red' : '#555';
         return color;
     }
 
@@ -199,33 +174,33 @@ const GraphPage = () => {
         }
     }
 
-    const nodeHoverHandler = (node: any) => {
-        if (node) {
-            nodeRef.current = node.id;
+    const vertexHoverHandler = (vertex: any) => {
+        if (vertex) {
+            vertexref.current = vertex.id;
           } else {
-            nodeRef.current = null;
+            vertexref.current = null;
           }
     }
 
-    const nodeSelectHandler = (node: any) => {
-        if (node && !startNode.current && !targetNode.current) {
-            startNode.current = node.id;
-            findNodeAndChangeColor(node.id, 'start')
-          } else if (node && startNode.current && !targetNode.current) {
-            findNodeAndChangeColor(node.id, 'target');
-            targetNode.current = node.id;
+    const vertexSelectHandler = (vertex: any) => {
+        if (vertex && !startVertex.current && !targetVertex.current) {
+            startVertex.current = vertex.id;
+            findVertexAndChangeColor(vertex.id, 'start')
+          } else if (vertex && startVertex.current && !targetVertex.current) {
+            findVertexAndChangeColor(vertex.id, 'target');
+            targetVertex.current = vertex.id;
           } else {
-            startNode.current = null;
-            targetNode.current = null;
-            findNodeAndChangeColor(startNode.current, 'reset');
-            findNodeAndChangeColor(targetNode.current, 'reset');
+            startVertex.current = null;
+            targetVertex.current = null;
+            findVertexAndChangeColor(startVertex.current, 'reset');
+            findVertexAndChangeColor(targetVertex.current, 'reset');
           }
     }
 
     const radioButtonHandler = (event: FormEvent<HTMLDivElement>) => {
         const value = (event.target as HTMLTextAreaElement).value;
 
-        if (value == 'bfs') {
+        if (value === 'bfs') {
             selectedAlgoRef.current = 'bfs';
             setDfsChecked(false);
         } else {
@@ -235,15 +210,17 @@ const GraphPage = () => {
     }
 
     const searchButtonHandler = () => {
-        if (selectedAlgoRef.current == 'bfs') {
-            graphSearchBreadthFirst(startNode.current, targetNode.current)
+        if (selectedAlgoRef.current === 'bfs') {
+            graphSearchBreadthFirst(startVertex.current, targetVertex.current)
 
         } else {
-            graphSearchDepthFirst(graph, startNode.current, targetNode.current, [], startNode.current)
+            graphSearchDepthFirst(graph, startVertex.current, targetVertex.current, [], startVertex.current)
         }
     }
 
     const resetButtonHandler = () => {
+        startVertex.current = null;
+        targetVertex.current = null;
         setReset(!reset);
     }
 
@@ -291,23 +268,23 @@ const GraphPage = () => {
                 graphData={graphData}
                 linkWidth={2}
                 linkColor={link => linkColorHandler(link) }
-                nodeColor={ node => nodeColorHandler(node) }
+                nodeColor={ vertex => vertexColorHandler(vertex) }
                 nodeCanvasObjectMode={() => "after"}
-                onNodeHover={(node) => nodeHoverHandler(node)}
-                onNodeClick={(node) => nodeSelectHandler(node)}
-                nodeCanvasObject={(node, ctx, globalScale) => {
-                const label = node.id;
+                onNodeHover={(vertex) => vertexHoverHandler(vertex)}
+                onNodeClick={(vertex) => vertexSelectHandler(vertex)}
+                nodeCanvasObject={(vertex, ctx, globalScale) => {
+                const label = vertex.id;
                 const fontSize = 12 / globalScale;
                 ctx.font = `${fontSize}px Sans-Serif`;
                 ctx.textAlign = "center";
                 ctx.textBaseline = "middle";
-                ctx.fillStyle = "black"; //node.color;
+                ctx.fillStyle = "black";
                 if (
-                    typeof label == 'string' && 
-                    typeof node.x == 'number' && 
-                    typeof node.y == 'number'
+                    typeof label === 'string' && 
+                    typeof vertex.x === 'number' && 
+                    typeof vertex.y === 'number'
                 ) {
-                    ctx.fillText(label, node.x, node.y + 15);
+                    ctx.fillText(label, vertex.x, vertex.y + 15);
                 }
                 }}
                 autoPauseRedraw= {false}
