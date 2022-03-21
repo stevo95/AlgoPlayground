@@ -16,9 +16,18 @@ export interface GraphVertexInterface {
     label: string;
     color: string;
     val?: number;
+    isSearched?: boolean;
+    isStartingWord?: boolean;
+    isTargetWord?: boolean
 }
 
 export interface LinkInterface {
     source: string;
     target: string;
+}
+
+export interface GraphLinkInterface {
+    source: GraphVertexInterface;
+    target: GraphVertexInterface;
+    isPassed?: boolean;
 }

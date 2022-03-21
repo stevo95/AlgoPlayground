@@ -3,19 +3,20 @@ import './Graph.Page.css';
 import { ForceGraph2D } from 'react-force-graph';
 import generateRandomGraph from '../Services/generate-random-graph'
 import { GraphInterface, LinkInterface, GraphVertexInterface } from '../Interfaces/GraphInterfaces';
+import { findVertexAndChangeColor, findLinkAndChangeColor } from '../Helpers/GraphPage.Helpers';
 
 const GraphPage = (): ReactElement => {
 
-    const [vertexes, setVertex]: GraphVertexInterface[] | any[] = useState([]);
-    const [links, setLinks]: LinkInterface[] | any[] = useState([]);
-    const [graph, setGraph]: any = useState([]);
     const [dfsChecked, setDfsChecked] = useState(false);
-    const vertexref: any = useRef(null);
+    const [graph, setGraph]: any = useState([]);
+    const [links, setLinks]: LinkInterface[] | any[] = useState([]);
+    const [reset, setReset]: any = useState(false)
+    const [vertexes, setVertex]: GraphVertexInterface[] | any[] = useState([]);
+    const vertexRef: any = useRef(null);
     const startVertex: any = useRef(null)
     const targetVertex: any = useRef(null)
     const increment: MutableRefObject<number> = useRef(1000)
     const selectedAlgoRef: MutableRefObject<string> = useRef('bfs');
-    const [reset, setReset]: any = useState(false)
     const graphData = {
         nodes: vertexes, 
         links: links
@@ -52,39 +53,13 @@ const GraphPage = (): ReactElement => {
         setLinks(tempLinks);
     }, [reset]);
 
-    
-    const findVertexAndChangeColor = (searchFor: string, state: string) => {
-        for (const vertex of vertexes) {
-            if (vertex.id === searchFor) {
-                if (state === 'searched') {
-                    vertex.isSearched = true;
-                } else if (state === 'target') {
-                    vertex.isTargetWord = true;
-                } else if (state === 'start') {
-                    vertex.isStartingWord = true;
-                } else {
-                    vertex.isStartingWord = false;
-                    vertex.isTargetWord = false;
-                }
-            }
-        }
-    }
-
-    const findLinkAndChangeColor = (source: string, target: string) => {
-        for (const link of links) {
-            if (link.source.id === source && link.target.id === target) {
-                link.isPassed = true;
-            }
-        }
-    }
-
     const changeOnDelay = (ms: number, searchFor: string, state: string, link: LinkInterface, linkOnly: boolean): Promise<null> => {
         return new Promise(resolve => setTimeout(() => {
             if (linkOnly) {
-                findLinkAndChangeColor(link.source, link.target);
+                findLinkAndChangeColor(link.source, link.target, links);
             } else {
-                findVertexAndChangeColor(searchFor, state);
-                findLinkAndChangeColor(link.source, link.target);
+                findVertexAndChangeColor(searchFor, state, vertexes);
+                findLinkAndChangeColor(link.source, link.target, links);
             }
             console.log("link to color: ", link)
             resolve(null)
@@ -176,24 +151,24 @@ const GraphPage = (): ReactElement => {
 
     const vertexHoverHandler = (vertex: any) => {
         if (vertex) {
-            vertexref.current = vertex.id;
+            vertexRef.current = vertex.id;
           } else {
-            vertexref.current = null;
+            vertexRef.current = null;
           }
     }
 
     const vertexSelectHandler = (vertex: any) => {
         if (vertex && !startVertex.current && !targetVertex.current) {
             startVertex.current = vertex.id;
-            findVertexAndChangeColor(vertex.id, 'start')
+            findVertexAndChangeColor(vertex.id, 'start', vertexes)
           } else if (vertex && startVertex.current && !targetVertex.current) {
-            findVertexAndChangeColor(vertex.id, 'target');
+            findVertexAndChangeColor(vertex.id, 'target', vertexes);
             targetVertex.current = vertex.id;
           } else {
             startVertex.current = null;
             targetVertex.current = null;
-            findVertexAndChangeColor(startVertex.current, 'reset');
-            findVertexAndChangeColor(targetVertex.current, 'reset');
+            findVertexAndChangeColor(startVertex.current, 'reset', vertexes);
+            findVertexAndChangeColor(targetVertex.current, 'reset', vertexes);
           }
     }
 
