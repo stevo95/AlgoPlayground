@@ -61,7 +61,6 @@ const GraphPage = (): ReactElement => {
                 findVertexAndChangeColor(searchFor, state, vertexes);
                 findLinkAndChangeColor(link.source, link.target, links);
             }
-            console.log("link to color: ", link)
             resolve(null)
         }, ms + increment.current));
     }
@@ -109,7 +108,6 @@ const GraphPage = (): ReactElement => {
 
             if (vertex === targetWord && link) {
                 changeOnDelay(1000, vertex, 'searched', link, true);
-                console.log(links)
                 break;
             } else if (link && vertex !== targetVertex.current && vertex !== startWord && vertex !== targetWord) {
                 changeOnDelay(1000, vertex, 'searched', link, false);
