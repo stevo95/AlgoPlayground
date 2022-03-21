@@ -12,9 +12,9 @@ interface VertexInterface {
 }
 
 export interface GraphVertexInterface {
-    id: string;
-    label: string;
-    color: string;
+    id?: string | number | undefined;
+    label?: string;
+    color?: string;
     val?: number;
     isSearched?: boolean;
     isStartingWord?: boolean;
@@ -27,7 +27,7 @@ export interface LinkInterface {
 }
 
 export interface GraphLinkInterface {
-    source: GraphVertexInterface;
-    target: GraphVertexInterface;
+    source?: string | number | GraphVertexInterface | undefined;
+    target?:  string | number | GraphVertexInterface | undefined;
     isPassed?: boolean;
 }

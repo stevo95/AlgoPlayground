@@ -18,11 +18,19 @@ const findVertexAndChangeColor = (searchFor: string, state: string, vertexes: Gr
 }
 
 const findLinkAndChangeColor = (source: string, target: string, links: GraphLinkInterface[]) => {
+    if (links.length === 0) return;
     for (const link of links) {
+        if (!link.source || !link.target || !isInstanceOfGraphVertexInterface(link.source) || !isInstanceOfGraphVertexInterface(link.target)) {
+            continue;
+        }
         if (link.source.id === source && link.target.id === target) {
             link.isPassed = true;
         }
     }
+}
+
+const isInstanceOfGraphVertexInterface = (object: any): object is GraphVertexInterface => {
+    return 'id' in object;
 }
 
 export {

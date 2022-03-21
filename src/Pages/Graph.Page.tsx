@@ -1,21 +1,21 @@
-import { useState, useRef, useEffect, MutableRefObject, FormEvent, ReactElement } from 'react';
+import { useState, useRef, useEffect, MutableRefObject, FormEvent, ReactElement, Dispatch, SetStateAction } from 'react';
 import './Graph.Page.css';
 import { ForceGraph2D } from 'react-force-graph';
 import generateRandomGraph from '../Services/generate-random-graph'
-import { GraphInterface, LinkInterface, GraphVertexInterface } from '../Interfaces/GraphInterfaces';
+import { GraphInterface, LinkInterface, GraphVertexInterface, GraphLinkInterface } from '../Interfaces/GraphInterfaces';
 import { findVertexAndChangeColor, findLinkAndChangeColor } from '../Helpers/GraphPage.Helpers';
 
 const GraphPage = (): ReactElement => {
 
-    const [dfsChecked, setDfsChecked] = useState(false);
-    const [graph, setGraph]: any = useState([]);
+    const [dfsChecked, setDfsChecked] = useState<boolean>(false);
+    const [graph, setGraph]: GraphVertexInterface[] | any[] = useState([]);
     const [links, setLinks]: LinkInterface[] | any[] = useState([]);
-    const [reset, setReset]: any = useState(false)
+    const [reset, setReset] = useState<boolean>(false)
     const [vertexes, setVertex]: GraphVertexInterface[] | any[] = useState([]);
-    const vertexRef: any = useRef(null);
-    const startVertex: any = useRef(null)
-    const targetVertex: any = useRef(null)
-    const increment: MutableRefObject<number> = useRef(1000)
+    const vertexRef = useRef<string>('');
+    const startVertex = useRef<string>('')
+    const targetVertex = useRef<string>('null')
+    const increment = useRef<number>(1000)
     const selectedAlgoRef: MutableRefObject<string> = useRef('bfs');
     const graphData = {
         nodes: vertexes, 
@@ -94,8 +94,8 @@ const GraphPage = (): ReactElement => {
         const linkQueue: LinkInterface[] = [];
         const searchedVertexes = [];
         const history = [];
-        let vertex: any;
-        let link: any; 
+        let vertex: string | undefined;
+        let link: LinkInterface | undefined; 
 
         while (searchQueue.length) {
             vertex = searchQueue.shift();
@@ -105,11 +105,13 @@ const GraphPage = (): ReactElement => {
                 link = linkQueue.shift();
             }
 
-            if (vertex === targetWord) {
+            if (!vertex) return;
+
+            if (vertex === targetWord && link) {
                 changeOnDelay(1000, vertex, 'searched', link, true);
                 console.log(links)
                 break;
-            } else if (vertex !== targetVertex && vertex !== startWord && vertex !== targetWord) {
+            } else if (link && vertex !== targetVertex.current && vertex !== startWord && vertex !== targetWord) {
                 changeOnDelay(1000, vertex, 'searched', link, false);
                 increment.current += 1000;
                 history.push({
@@ -131,7 +133,7 @@ const GraphPage = (): ReactElement => {
 
     }
 
-    const vertexColorHandler = (vertex: any) => {
+    const vertexColorHandler = (vertex: GraphVertexInterface) => {
         if (vertex.isTargetWord) {
             return 'greenyellow';
         } else if (vertex.isStartingWord) {
@@ -141,7 +143,7 @@ const GraphPage = (): ReactElement => {
         return color;
     }
 
-    const linkColorHandler = (link: any) => {
+    const linkColorHandler = (link: GraphLinkInterface) => {
         if (link.isPassed) {
             return 'red';
         } else {
@@ -149,24 +151,24 @@ const GraphPage = (): ReactElement => {
         }
     }
 
-    const vertexHoverHandler = (vertex: any) => {
-        if (vertex) {
+    const vertexHoverHandler = (vertex: GraphVertexInterface | null) => {
+        if (vertex && typeof vertex.id === 'string') {
             vertexRef.current = vertex.id;
           } else {
-            vertexRef.current = null;
+            vertexRef.current = '';
           }
     }
 
-    const vertexSelectHandler = (vertex: any) => {
-        if (vertex && !startVertex.current && !targetVertex.current) {
+    const vertexSelectHandler = (vertex: GraphVertexInterface) => {
+        if (vertex && !startVertex.current && !targetVertex.current && typeof vertex.id === 'string') {
             startVertex.current = vertex.id;
             findVertexAndChangeColor(vertex.id, 'start', vertexes)
-          } else if (vertex && startVertex.current && !targetVertex.current) {
+          } else if (vertex && startVertex.current && !targetVertex.current && typeof vertex.id === 'string') {
             findVertexAndChangeColor(vertex.id, 'target', vertexes);
             targetVertex.current = vertex.id;
           } else {
-            startVertex.current = null;
-            targetVertex.current = null;
+            startVertex.current = '';
+            targetVertex.current = '';
             findVertexAndChangeColor(startVertex.current, 'reset', vertexes);
             findVertexAndChangeColor(targetVertex.current, 'reset', vertexes);
           }
@@ -194,8 +196,8 @@ const GraphPage = (): ReactElement => {
     }
 
     const resetButtonHandler = () => {
-        startVertex.current = null;
-        targetVertex.current = null;
+        startVertex.current = '';
+        targetVertex.current = '';
         setReset(!reset);
     }
 
